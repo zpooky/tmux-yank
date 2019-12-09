@@ -94,6 +94,18 @@ go_to_the_end_of_current_line() {
 }
 
 yank_current_line() {
+  local copied=false
+  if [ "${SHELL}" = "/bin/zsh" ] || [ "${SHELL}" = "/usr/bin/zsh" ]; then
+    tmux send-keys 'C-f12'
+    copied=true
+  #   zle -al xxcopybuffer
+  #   if [ $? -eq 0 ]; then
+  #     xxcopybuffer
+  #     copied=true
+  #   fi
+  fi
+
+  if [ "$copied" = false ]; then
     go_to_the_beginning_of_current_line
     add_sleep_for_remote_shells
     enter_tmux_copy_mode
@@ -101,7 +113,9 @@ yank_current_line() {
     end_of_line_in_copy_mode
     yank_to_clipboard
     go_to_the_end_of_current_line
-    display_message 'Line copied to clipboard!'
+  fi
+
+  display_message "Line copied to clipboard!"
 }
 
 main() {
